@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myToDos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="banner"></div>
+    <header><h1>My ToDos</h1></header>
+    <main>
+        <div class="input-container">
+            <input type="text" placeholder="add new todo..." id="desc">
+            <i class="fa-solid fa-plus fa-2x" onclick="add()"></i>
+        </div>
+        <div class="todolist-container">
+            <div class="todos"></div>
+        </div>
+    </main>
+    <script>
+        const delIcon = `<i class="fa-solid fa-trash-can fa-2x" onclick="del(this)"></i>`
+        const checkIcon =(cls = '')=> `<i class="fa-solid fa-square-check fa-2x ${cls}" onclick="myToggle(this)"></i>`
+        let myToDos=localStorage.getItem('mytodos') ? JSON.parse(localStorage['mytodos']) : []
+
+        const renderList=(arr)=>{
+            document.querySelector('.todos').innerHTML=''
+            arr.forEach(obj => {
+                let className1 = obj.status ? "done" : ''
+                let className2 = obj.status ? "green" : ''
+                document.querySelector('.todos').innerHTML+=`
+                <div class="todoitem" id="${obj.id}">
+                    ${checkIcon(className2)}
+                    <span class="${className1}">${obj.desc}</span>
+                    ${delIcon}
+                </div>                
+                `
+            });
+        }
+        renderList(myToDos);
+
+        const add=()=>{
+            let desc = document.getElementById('desc').value
+            //console.log(descr);
+            if(desc.length==0) return;
+            //console.log(new Date().getTime());
+            let id = new Date().getTime()
+            myToDos=[...myToDos, {id: id, desc: desc, status: false}]
+            localStorage["mytodos"]=JSON.stringify(myToDos)
+            console.log(myToDos);
+            renderList(myToDos);
+        }
+        
+        const del=(domObj)=>{
+            let delID = domObj.parentNode.id
+            console.log(delID);
+            myToDos = myToDos.filter(obj=>obj.id!=delID)
+            renderList(myToDos)
+            localStorage["mytodos"]=JSON.stringify(myToDos)
+            
+        }
+        const myToggle=(domObj)=>{
+            let delID = domObj.parentNode.id
+            myToDos.forEach(obj => {
+                if(obj.id==delID) obj.status=!obj.status
+            })
+            renderList(myToDos)
+            localStorage["mytodos"]=JSON.stringify(myToDos)
+
+
+        }
+    </script>
+
+</body>
+</html>
